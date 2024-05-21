@@ -9,6 +9,9 @@ class EmployeeController extends Controller
 {
     public function index(){
         $data = Employee::all();
-        return response()->json($data);
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
     }
 }
