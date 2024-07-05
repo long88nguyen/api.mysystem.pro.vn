@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SendMailController;
 use App\Services\_Constant\ConstantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,3 +30,5 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::post('/', [MessageController::class, 'store']);
     });
 });
+
+Route::post('/send-mail', [SendMailController::class, 'sendMail']);
