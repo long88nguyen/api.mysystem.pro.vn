@@ -31,5 +31,7 @@ class InsertDataCommand extends Command
             'age' => random_int(18,40),
         ];
         Employee::create($arraySave);
+        file_put_contents('/var/log/laravel-command.log', now() . " - Command ran successfully\n".$arraySave, FILE_APPEND);
+
     }
 }

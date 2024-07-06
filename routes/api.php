@@ -29,6 +29,6 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::get('/', [MessageController::class, 'getAll']);
         Route::post('/', [MessageController::class, 'store']);
     });
-});
 
-Route::post('/send-mail', [SendMailController::class, 'sendMail']);
+    Route::post('/send-mail', [SendMailController::class, 'sendMail']);
+});
