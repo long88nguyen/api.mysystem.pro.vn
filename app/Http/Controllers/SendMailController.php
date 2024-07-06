@@ -9,8 +9,9 @@ class SendMailController extends Controller
 {
     public function sendMail(Request $request)
     {   
-        $details['email'] = $request['email'];
-        $details['content'] = '<h1>Test Mail</h1>';
+        $details['email'] = 'long432hvt@gmail.com';
+        $details['content'] = $request['content'];
         SendMail::dispatch($details);
+        return response()->json(['status' => true, 'message' => 'Send Mail Successfully!']);
     }
 }
