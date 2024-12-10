@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthAdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', [AuthAdminController::class, 'loginForm'])->name('auth-login.login-form');
+Route::post('/login', [AuthAdminController::class, 'login'])->name('auth-login.login');

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
@@ -56,9 +57,17 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewTelescope', function ($user) {
+            if (!$user) {
+                try {
+                    $user = Auth::user();
+                } catch (\Exception $e) {
+                    return false;
+                }
+            }
+            
             return in_array($user->email, [
-                //
-            ]);
+                'test@example.com',
+            ]); // Giả sử bạn có phương thức hasRole()
         });
     }
 }
