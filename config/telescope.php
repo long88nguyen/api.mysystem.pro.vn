@@ -94,7 +94,7 @@ return [
     'middleware' => [
         'web',
         'jwt.telescope',
-        Authorize::class,
+        // Authorize::class,
     ],
 
     /*
