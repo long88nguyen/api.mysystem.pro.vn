@@ -27,7 +27,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                    $entry->isFailedRequest() ||
                    $entry->isFailedJob() ||
                    $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+                   $entry->hasMonitoredTag() ||
+                   $this->shouldLogSuccessfulRequest($entry); // Gọi phương thức kiểm tra request
         });
     }
 
@@ -49,6 +50,21 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         ]);
     }
 
+    protected function shouldLogSuccessfulRequest(IncomingEntry $entry): bool
+    {
+        if ($entry->type === 'request') {
+            $request = $entry->content;
+            $method = $request['method'] ?? '';
+            // $statusCode = $request['response_status'] ?? 0;
+
+            // Chỉ log các request POST, PUT, DELETE với status 200
+            if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     /**
      * Register the Telescope gate.
      *
