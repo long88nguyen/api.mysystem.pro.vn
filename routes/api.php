@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/employee', [EmployeeController::class, 'index']);
-Route::post('/employee/store', [EmployeeController::class, 'store']);
-Route::delete('/employee/delete/{id}', [EmployeeController::class, 'delete']);
+
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -30,5 +28,8 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::post('/', [MessageController::class, 'store']);
     });
 
+    Route::get('/employee', [EmployeeController::class, 'index']);
+    Route::post('/employee/store', [EmployeeController::class, 'store']);
+    Route::delete('/employee/delete/{id}', [EmployeeController::class, 'delete']);
     Route::post('/send-mail', [SendMailController::class, 'sendMail']);
 });
