@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\ArtificialIntelligenceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SendMailController;
 use App\Services\_Constant\ConstantService;
@@ -21,7 +22,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::post('/convert-speech-to-text', [ArtificialIntelligenceController::class, 'convert']);
+Route::post('/convert-text-to-speech', [ArtificialIntelligenceController::class, 'convertTextToSpeech']);
+Route::post('/chat-gpt-prompt', [ArtificialIntelligenceController::class, 'chatGPTPrompt']);
 Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function () {
     Route::prefix('message')->group(function() {
         Route::get('/', [MessageController::class, 'getAll']);
@@ -33,3 +36,4 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
     Route::delete('/employee/delete/{id}', [EmployeeController::class, 'delete']);
     Route::post('/send-mail', [SendMailController::class, 'sendMail']);
 });
+
