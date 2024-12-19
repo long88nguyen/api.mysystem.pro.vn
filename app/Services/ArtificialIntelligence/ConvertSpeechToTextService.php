@@ -38,11 +38,16 @@ class ConvertSpeechToTextService extends BaseService
             ]);
 
             if($response && in_array($response->language, $languagesAllowed)) {
-                return $this->sendSuccessResponse([
-                    'text' => $response->text,
-                    'language' => $response->language,
-                    'url' => 'storage/audio/'.$imageName,
-                ]);
+                $ttsService = new ConvertTextToSpeechService();
+                $audioResult = $ttsService->convert(['text' => $response->text, 'language' => 'vi']);
+
+                if($audioResult)
+                {
+                    return $this->sendSuccessResponse([
+                        'url' => $audioResult,
+                    ]);
+                }
+                
             }
             return $this->sendErrorResponse('Bad request', ConstantService::HTTP_BAD_REQUEST);
         } else {

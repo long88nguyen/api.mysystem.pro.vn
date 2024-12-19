@@ -34,16 +34,21 @@ class ConvertTextToSpeechService extends BaseService
             'Content-Type: application/json'
         ));
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array(
-            'model' => isset($request['model']) ? $request['model'] : 'tts-1',
+            // 'model' => isset($request['model']) ? $request['model'] : 'tts-1',
+            // 'input' => $resultChatGPTPrompt ?? 'Chúng tôi không hiểu bạn nói gì',
+            // 'voice' => isset($request['voice']) ? $request['voice'] : 'alloy',
+            // 'language' => isset($request['language']) ? $request['language'] : 'en',
+
+            'model' => 'tts-1',
             'input' => $resultChatGPTPrompt ?? 'Chúng tôi không hiểu bạn nói gì',
-            'voice' => isset($request['voice']) ? $request['voice'] : 'alloy',
-            'language' => isset($request['language']) ? $request['language'] : 'en',
+            'voice' => 'alloy',
+            'language' => 'vi',
         )));
 
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            return $this->sendErrorResponse('Không ghi được file âm thanh');
+            return false;
         } else {
             // Tên file ngẫu nhiên để tránh ghi đè
             $filename = 'speech_' . time() . '.mp3';
@@ -55,10 +60,7 @@ class ConvertTextToSpeechService extends BaseService
 
             $publicUrl = Storage::disk('public')->url($filename);
 
-            return $this->sendSuccessResponse([
-                'url' => $publicUrl,
-                'text' => $resultChatGPTPrompt,
-            ]);
+            return $publicUrl;
         }
 
         curl_close($ch);
