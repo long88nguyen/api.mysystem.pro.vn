@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/convert-speech-to-text', [ArtificialIntelligenceController::class, 'convert']);
 Route::post('/convert-text-to-speech', [ArtificialIntelligenceController::class, 'convertTextToSpeech']);
+Route::post('/chat-gpt-prompt', [ArtificialIntelligenceController::class, 'chatGPTPrompt']);
 Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function () {
     Route::prefix('message')->group(function() {
         Route::get('/', [MessageController::class, 'getAll']);

@@ -28,7 +28,7 @@ class ConvertSpeechToTextService extends BaseService
             $languagesAllowed = ['english', 'vietnamese'];
 
             $fullPath = storage_path('app/'.$path);
-            $apiKey = env('OPEN_AI_KEY', true);
+            $apiKey = env('OPENAI_API_KEY', true);
             $client = OpenAI::client($apiKey);
 
             $response = $client->audio()->transcribe([
