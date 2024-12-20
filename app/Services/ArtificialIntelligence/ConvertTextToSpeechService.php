@@ -12,12 +12,8 @@ class ConvertTextToSpeechService extends BaseService
 
     public function __construct() {}
 
-    public function convert($request)
+    public function convert($text)
     {
-        $languages = [ 'en' => 'Tiếng Anh', 'vi' => 'Tiếng Việt'];
-        $chatGPTPrompt = new ChatGPTPromptSevice();
-        $languageSelect = $request['language'] ?? 'vi';
-        $resultChatGPTPrompt = $chatGPTPrompt->chat($request['text'], $languages[$languageSelect]);
         $openai_api_key = env('OPENAI_API_KEY');
         $ch = curl_init();
 
@@ -35,7 +31,7 @@ class ConvertTextToSpeechService extends BaseService
             // 'language' => isset($request['language']) ? $request['language'] : 'en',
 
             'model' => 'tts-1',
-            'input' => $resultChatGPTPrompt ?? 'Chúng tôi không hiểu bạn nói gì',
+            'input' => $text ?? 'Chúng tôi không hiểu bạn nói gì',
             'voice' => 'alloy',
             'language' => 'vi',
         )));

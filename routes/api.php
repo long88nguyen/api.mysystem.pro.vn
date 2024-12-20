@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::get('/get-by-id/{id}', [ChatRoomController::class, 'getById'])->name('chat-room.get-by-id');
     });
 
-    Route::prefix('chat-messages')->group(function () {
+    Route::prefix('chat-message')->group(function () {
         Route::get('/get-by-chat-room-id/{chat_room_id}', [ChatMessageController::class, 'getByChatRoomId']);
         Route::post('/store-text', [ChatMessageController::class, 'storeText']);
         Route::post('/store-speech', [ChatMessageController::class, 'storeSpeech']);
