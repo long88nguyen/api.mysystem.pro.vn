@@ -6,8 +6,6 @@ use App\Models\Message;
 use App\Services\_Abstract\BaseService;
 use App\Services\_Constant\ConstantService;
 use OpenAI;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class ConvertSpeechToTextService extends BaseService
 {

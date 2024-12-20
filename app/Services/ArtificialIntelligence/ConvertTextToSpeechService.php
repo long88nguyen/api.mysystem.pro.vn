@@ -2,12 +2,7 @@
 
 namespace App\Services\ArtificialIntelligence;
 
-use App\Models\Message;
 use App\Services\_Abstract\BaseService;
-use App\Services\_Constant\ConstantService;
-use OpenAI;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class ConvertTextToSpeechService extends BaseService
