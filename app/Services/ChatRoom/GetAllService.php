@@ -23,7 +23,7 @@ class GetAllService extends BaseService
 
     public function getAll($request)
     {
-        $chatRooms = $this->chatRoomModel->orderBy('created_at', 'desc')->get();
+        $chatRooms = $this->chatRoomModel->orderBy('id', 'desc')->get();
 
         return $this->sendSuccessResponse($chatRooms);
     }
