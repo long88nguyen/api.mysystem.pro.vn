@@ -21,6 +21,7 @@ class AuthService extends BaseService
         $password = md5($input['password']);
         
         $user = $this->userModel->where('name', $input['name'])->where('password', $password)->first();
+        
         if (!$user) {
             return $this->sendErrorResponse('Unauthorized', ConstantService::HTTP_UNAUTHORIZED);
         }

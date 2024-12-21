@@ -12,7 +12,7 @@ class ConvertTextToSpeechService extends BaseService
 
     public function __construct() {}
 
-    public function convert($text)
+    public function convert($options)
     {
         $openai_api_key = env('OPENAI_API_KEY');
         $ch = curl_init();
@@ -30,10 +30,10 @@ class ConvertTextToSpeechService extends BaseService
             // 'voice' => isset($request['voice']) ? $request['voice'] : 'alloy',
             // 'language' => isset($request['language']) ? $request['language'] : 'en',
 
-            'model' => 'tts-1',
-            'input' => $text ?? 'Chúng tôi không hiểu bạn nói gì',
-            'voice' => 'alloy',
-            'language' => 'vi',
+            'model' => $options['model'] ?? 'tts-1',
+            'input' => $options['input'] ?? 'Chúng tôi không hiểu bạn nói gì',
+            'voice' => $options['voice'] ?? 'alloy',
+            'language' => $options['language'] ?? 'vi',
         )));
 
         $result = curl_exec($ch);

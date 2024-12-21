@@ -15,9 +15,13 @@ class ChatGPTPromptSevice extends BaseService
 {
     public function __construct() {}
 
-    public function chat($prompt, $language)
+    public function chat($options)
     {
         try {
+            $language = [
+                'vi' => 'Tiếng Việt',
+                'en' => 'Tiếng Anh',
+            ];
             $client = new Client();
             $apiKey = env('OPENAI_API_KEY');
 
@@ -31,11 +35,11 @@ class ChatGPTPromptSevice extends BaseService
                     'messages' => [
                         [
                             "role" => "system",
-                            "content" => "Bạn là Peter, 21 tuổi, bạn đang là 1 sinh viên đại học. hãy trả lời các câu hỏi bằng ".$language." ngắn gọn, dễ hiểu , không dùng các ký tự đặc biệt."
+                            "content" => "Bạn là Peter, 21 tuổi, bạn đang là 1 sinh viên đại học. hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu , không dùng các ký tự đặc biệt."
                         ],
                         [
                             "role" => "user",
-                            "content" => $prompt // Nội dung do người dùng nhập vào
+                            "content" => $options['prompt'] ?? 'Kết thúc' // Nội dung do người dùng nhập vào
                         ]
                     ],
                     'max_tokens' => 150,

@@ -43,8 +43,23 @@ class StoreByTextService extends BaseService
             'user_id' => auth(ConstantService::AUTH_USER)->user()->id,
         ]);
 
-        $chatGPTResult = $this->chatGPT->chat($request['text'], 'Tiếng Việt');
-        $textToSpeechResult = $this->textToSpeech->convert($chatGPTResult); 
+
+        $chatRoom = ChatRoom::findOrFail($request['chat_room_id']);
+
+        $chatGPTOptions = [
+            'language' => $chatRoom->language ?? 'vi',
+            'prompt' => $request['text'],
+        ];
+        $chatGPTResult = $this->chatGPT->chat($chatGPTOptions);
+
+        $textToSpeechOptions = [
+            'model' => $chatRoom->text_to_speech_model,
+            'voice' => $chatRoom->voice_model,
+            'language' => $chatRoom->language,
+            'input' => $chatGPTResult,
+        ];
+
+        $textToSpeechResult = $this->textToSpeech->convert($textToSpeechOptions); 
 
         $result = $this->chatMessageModel->create([
             'content' => $chatGPTResult,
