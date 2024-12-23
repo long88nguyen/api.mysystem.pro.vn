@@ -35,7 +35,7 @@ class ChatGPTPromptSevice extends BaseService
                     'messages' => [
                         [
                             "role" => "system",
-                            "content" => "Bạn là Peter, 21 tuổi, bạn đang là 1 sinh viên đại học. hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu , không dùng các ký tự đặc biệt."
+                            "content" => "Bạn là Peter, 21 tuổi, bạn đang là 1 sinh viên đại học. hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu , có thể thêm \n nếu cần xuống dòng"
                         ],
                         [
                             "role" => "user",

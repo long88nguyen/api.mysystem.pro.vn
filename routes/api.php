@@ -6,6 +6,7 @@ use App\Http\Controllers\ArtificialIntelligenceController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PronunciationController;
 use App\Http\Controllers\SendMailController;
 use App\Services\_Constant\ConstantService;
 use Illuminate\Http\Request;
@@ -44,6 +45,12 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::get('/get-by-chat-room-id/{chat_room_id}', [ChatMessageController::class, 'getByChatRoomId']);
         Route::post('/store-text', [ChatMessageController::class, 'storeText']);
         Route::post('/store-speech', [ChatMessageController::class, 'storeSpeech']);
+    });
+
+    Route::prefix('pronunciation')->group(function () {
+        Route::get('/index', [PronunciationController::class, 'index']);
+        Route::post('/store', [PronunciationController::class, 'store']);
+        Route::get('/get-by-id/{id}', [PronunciationController::class, 'getById']);
     });
 
     Route::get('/employee', [EmployeeController::class, 'index']);
