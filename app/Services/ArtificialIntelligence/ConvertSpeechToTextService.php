@@ -5,6 +5,7 @@ namespace App\Services\ArtificialIntelligence;
 use App\Models\Message;
 use App\Services\_Abstract\BaseService;
 use App\Services\_Constant\ConstantService;
+use Illuminate\Support\Facades\Storage;
 use OpenAI;
 
 class ConvertSpeechToTextService extends BaseService
@@ -22,7 +23,7 @@ class ConvertSpeechToTextService extends BaseService
             $audioFile = $request->file('audio');
             $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
             $path = $audioFile->storeAs('public/audio', $imageName);
-
+            $apiPath = Storage::disk('public')->url('audio/'.$imageName);
             $languagesAllowed = ['english', 'vietnamese'];
 
             $fullPath = storage_path('app/'.$path);
@@ -36,16 +37,12 @@ class ConvertSpeechToTextService extends BaseService
             ]);
 
             if($response && in_array($response->language, $languagesAllowed)) {
-                $ttsService = new ConvertTextToSpeechService();
-                $audioResult = $ttsService->convert(['text' => $response->text, 'language' => 'vi']);
 
-                if($audioResult)
-                {
-                    return $this->sendSuccessResponse([
-                        'url' => $audioResult,
-                    ]);
-                }
-                
+                return [
+                    'text' => $response->text,
+                    'url' => $apiPath,
+                ];
+
             }
             return $this->sendErrorResponse('Bad request', ConstantService::HTTP_BAD_REQUEST);
         } else {

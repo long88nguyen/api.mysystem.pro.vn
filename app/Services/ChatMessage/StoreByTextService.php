@@ -36,6 +36,7 @@ class StoreByTextService extends BaseService
 
     public function store($request)
     {
+        
         $this->chatMessageModel->create([
             'content' => $request['text'],
             'chat_room_id' => $request['chat_room_id'],
@@ -45,12 +46,20 @@ class StoreByTextService extends BaseService
 
 
         $chatRoom = ChatRoom::findOrFail($request['chat_room_id']);
-
         $chatGPTOptions = [
             'language' => $chatRoom->language ?? 'vi',
             'prompt' => $request['text'],
         ];
+
         $chatGPTResult = $this->chatGPT->chat($chatGPTOptions);
+
+        $translationOptions = [
+            'language' => $chatRoom->language == 'vi' ? 'en' : 'vi',
+            'text' => $chatGPTResult,
+        ];
+
+        $chatGPTTranstionResult = $this->chatGPT->translation($translationOptions);
+
 
         $textToSpeechOptions = [
             'model' => $chatRoom->text_to_speech_model,
@@ -66,9 +75,10 @@ class StoreByTextService extends BaseService
             'chat_room_id' => $request['chat_room_id'],
             'role' => 'system',
             'user_id' => auth(ConstantService::AUTH_USER)->user()->id,
-            'audio' => $textToSpeechResult
+            'audio' => $textToSpeechResult,
+            'translation' => $chatGPTTranstionResult,
         ]);
 
         return $this->sendSuccessResponse($result);
     }
-}
+}   
