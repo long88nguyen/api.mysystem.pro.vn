@@ -21,7 +21,10 @@ class GetByIdService extends BaseService
 
     public function getById($id)
     {
-        $result = $this->pronunciationModel->with('pronunciation_details')->findOrFail($id);
+        $userId = auth(ConstantService::AUTH_USER)->user()->id;
+        $result = $this->pronunciationModel->with(['pronunciation_details', 'pronunciation_details.pronunciation_result' => function ($query) use($userId){
+            $query->where('user_id', $userId);
+        }])->findOrFail($id);
         return $this->sendSuccessResponse($result);
     }
 }

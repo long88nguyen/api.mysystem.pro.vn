@@ -18,4 +18,9 @@ class PronunciationDetail extends Model
         "ipa",
         "created_by",
     ];
+
+    public function pronunciation_result()
+    {
+        return $this->hasOne(PronunciationResult::class, 'pronunciation_detail_id', 'id');
+    }
 }
