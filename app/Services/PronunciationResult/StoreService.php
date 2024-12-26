@@ -29,8 +29,7 @@ class StoreService extends BaseService
     {
         $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
         $data = $this->convertSpeechToText->convert($request);
-        
-        $calculatePoint = $this->calculatePoint($pronunciationDetail->content, $data['text']);
+        $calculatePoint = $this->calculatePoint($pronunciationDetail->content, strtolower($data['text']));
         
         $userId = auth(ConstantService::AUTH_USER)->user()->id;
         
@@ -38,33 +37,30 @@ class StoreService extends BaseService
         if($checkResult) 
         {
             $checkResult->update([
-                'content' => $data['text'],
+                'content' => strtolower($this->trimSpecialCharacters($data['text'])),
                 'point' => $calculatePoint['score'],
                 'audio' => $data['url'],
-            ]);
+                'result' => json_encode($calculatePoint['result']),
+            ]); 
         }
         else{
             PronunciationResult::create( [
                 'user_id' => $userId,
                 'pronunciation_detail_id' => $request['pronunciation_detail_id'],
-                'content' => $data['text'],
+                'content' => strtolower($this->trimSpecialCharacters($data['text'])),
                 'point' => $calculatePoint['score'],
                 'audio' => $data['url'],
+                'result' => json_encode($calculatePoint['result']),
             ]);
         }
 
         return $this->sendSuccessResponse([
             'url' => $data['url'],
-            'content' => $pronunciationDetail['content'],
-            'answer' => $data['text'],
-            'score' => $calculatePoint['score'],
-            'result' => $calculatePoint['result'],
         ]);
     }
 
     public function calculatePoint($question, $answer)
     {
-
         $new_question = preg_replace('/[^a-zA-Z0-9\s]/', '', $question);
         $new_answer = preg_replace('/[^a-zA-Z0-9\s]/', '', $answer);
 
@@ -91,7 +87,7 @@ class StoreService extends BaseService
             }
 
             foreach ($array_character_mapping as $key => $character) {
-                if (strtoupper($character['question']) == strtoupper($character['answer'])) {
+                if (isset($character['answer']) && strtolower($character['question']) == strtolower($character['answer'])) {
                     $arrayResult[] = [
                         'word' => $character['answer'],
                         'is_correct' => true,
@@ -100,7 +96,7 @@ class StoreService extends BaseService
                     $total_character_correct++;
                 } else {
                     $arrayResult[] = [
-                        'word' => $character['answer'],
+                        'word' => ' ',
                         'is_correct' => false,
                     ];
                 }
@@ -150,5 +146,14 @@ class StoreService extends BaseService
             'result' => $arrayResult,
             'score' => $score,
         ];
+    }
+
+    public static function trimSpecialCharacters($string)
+    {   
+        // Thay thế các loại dấu phẩy khác nhau bằng dấu phẩy chuẩn ","
+        $string = preg_replace("/[‚，、﹐﹑]/u", ",", $string);
+        $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
+        $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
+        return trim($result); // loại bỏ khoảng trắng ở 2 đầu
     }
 }

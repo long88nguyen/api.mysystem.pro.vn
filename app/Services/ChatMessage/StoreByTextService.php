@@ -36,19 +36,21 @@ class StoreByTextService extends BaseService
 
     public function store($request)
     {
-        
+
         $this->chatMessageModel->create([
             'content' => $request['text'],
             'chat_room_id' => $request['chat_room_id'],
             'role' => 'user',
             'user_id' => auth(ConstantService::AUTH_USER)->user()->id,
         ]);
-
+        
 
         $chatRoom = ChatRoom::findOrFail($request['chat_room_id']);
         $chatGPTOptions = [
             'language' => $chatRoom->language ?? 'vi',
             'prompt' => $request['text'],
+            'bot_name' => $chatRoom->bot_name,
+            'bot_description' => $chatRoom->bot_description,
         ];
 
         $chatGPTResult = $this->chatGPT->chat($chatGPTOptions);

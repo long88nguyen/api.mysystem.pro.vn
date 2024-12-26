@@ -37,7 +37,7 @@ class StoreService extends BaseService
                 'created_by' => auth(ConstantService::AUTH_USER)->user()->id,
             ];
 
-            if($item['audio'])
+            if(isset($item['audio']) && !empty($item['audio']))
             {
                 $file = $item['audio'];
                 $path = 'audio' . date("/Y/m/d/");

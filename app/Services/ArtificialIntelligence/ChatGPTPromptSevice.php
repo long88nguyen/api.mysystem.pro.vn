@@ -24,7 +24,9 @@ class ChatGPTPromptSevice extends BaseService
             ];
             $client = new Client();
             $apiKey = env(key: 'OPENAI_API_KEY');
-
+            $botName = $options['bot_name'] ?? 'Bot Chat';
+            $content = "Bạn tên là ".$botName.". Hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu, chỉ được trả lời bằng ".$language[$options['language']]." cho dù câu hỏi có là bất kỳ ngôn ngữ nào khác và yêu cầu người hỏi chỉ được hỏi câu hỏi về chủ đề động vật các câu hỏi khác thì không trả lời";
+            
             $response = $client->post('https://api.openai.com/v1/chat/completions', [
                 'headers' => [
                     'Content-Type' => 'application/json',
@@ -35,7 +37,7 @@ class ChatGPTPromptSevice extends BaseService
                     'messages' => [
                         [
                             "role" => "system",
-                            "content" => "Bạn là Peter, 21 tuổi, bạn đang là 1 sinh viên đại học. hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu , có thể thêm \n nếu cần xuống dòng"
+                            "content" => $content
                         ],
                         [
                             "role" => "user",

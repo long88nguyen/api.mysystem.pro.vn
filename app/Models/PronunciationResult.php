@@ -16,6 +16,7 @@ class PronunciationResult extends Model
         'audio',
         'point',
         'rate',
+        'result'
     ];
 
     protected $table = 'pronunciation_results';
