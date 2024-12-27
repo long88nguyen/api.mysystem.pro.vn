@@ -26,7 +26,7 @@ class ChatGPTPromptSevice extends BaseService
             $apiKey = env(key: 'OPENAI_API_KEY');
             $botName = $options['bot_name'] ?? 'Bot Chat';
             $requirement = $options['bot_description'] ? " và bạn chỉ được trả lời các câu hỏi liên quan đến chủ đề màu sắc, nếu câu hỏi không liên quan đến chủ đề màu sắc thì trả lời :I'm sorry, I can only answer questions related to topic" : "";
-            $content = "Bạn tên là ".$botName.". Hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu, chỉ được trả lời bằng ".$language[$options['language']]." cho dù câu hỏi có là bất kỳ ngôn ngữ nào khác ".$requirement."";
+            $content = "Bạn tên là ".$botName.". Hãy trả lời các câu hỏi bằng ".$language[$options['language']]." ngắn gọn, dễ hiểu, chỉ được trả lời bằng ".$language[$options['language']]." cho dù câu hỏi có là bất kỳ ngôn ngữ nào khác";
             
             $response = $client->post('https://api.openai.com/v1/chat/completions', [
                 'headers' => [

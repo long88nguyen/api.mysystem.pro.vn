@@ -27,11 +27,11 @@ class StoreService extends BaseService
         $data = $request->all();
 
         $arraySave = [
-            "bot_name" => $data['bot_name'],
-            "bot_avatar" => $data['bot_avatar'],
-            "bot_description" => $data['bot_description'],
+            "bot_name" => $data['bot_name'] ?? null,
+            "bot_avatar" => $data['bot_avatar'] ?? null, 
+            "bot_description" => $data['bot_description'] ?? null,
             "user_id" => auth(ConstantService::AUTH_USER)->user()->id,
-            "name" => $data['name'],
+            "name" => $data['name'] ?? null,
             "text_to_speech_model" => $data['text_to_speech_model'],
             "voice_model" => $data['voice_model'],
             "speech_to_text_model" => $data['speech_to_text_model'],

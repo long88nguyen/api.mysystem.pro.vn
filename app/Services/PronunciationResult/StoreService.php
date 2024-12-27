@@ -121,7 +121,7 @@ class StoreService extends BaseService
             foreach ($array_word_mapping as $key => $word) {
                 $total_question_word += strlen($word['question']);
 
-                if (strtoupper($word['answer']) == strtoupper($word['question'])) {
+                if ( isset($word['answer']) && strtoupper($word['answer']) == strtoupper($word['question'])) {
                     $arrayResult[] = [
                         "word" => $word['answer'],
                         "is_correct" => true,
@@ -130,7 +130,7 @@ class StoreService extends BaseService
                     $arrayWordCorrect += strlen($word['question']);
                 } else {
                     $arrayResult[] = [
-                        "word" => $word['answer'],
+                        "word" => ' ',
                         "is_correct" => false,
                     ];
                 }
