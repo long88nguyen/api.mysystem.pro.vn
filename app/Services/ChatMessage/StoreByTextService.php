@@ -42,6 +42,7 @@ class StoreByTextService extends BaseService
             'chat_room_id' => $request['chat_room_id'],
             'role' => 'user',
             'user_id' => auth(ConstantService::AUTH_USER)->user()->id,
+            'audio' => isset($request['audio']) ? $request['audio'] : null,
         ]);
         
 

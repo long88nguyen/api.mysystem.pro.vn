@@ -29,15 +29,10 @@ class StoreBySpeechService extends BaseService
     public function store($request)
     {
         $convertSpeectToTextResult =  $this->convertSpeechToTextService->convert($request);
-        
-        $result =  $this->chatMessageModel->create([
+        $result =  [
             'content' => $convertSpeectToTextResult['text'],
-            'chat_room_id' => $request['chat_room_id'],
-            'role' => 'user',
-            'user_id' => auth(guard: ConstantService::AUTH_USER)->user()->id,
             'audio' => $convertSpeectToTextResult['url'],
-            'translation' => null,
-        ]);
+        ];
 
         return $this->sendSuccessResponse($result);
     }

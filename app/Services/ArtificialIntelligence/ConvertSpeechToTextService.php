@@ -44,9 +44,13 @@ class ConvertSpeechToTextService extends BaseService
                 ];
 
             }
-            return $this->sendErrorResponse('Bad request', ConstantService::HTTP_BAD_REQUEST);
+
+            return [
+                'text' => null,
+                'url' => null,
+            ];
         } else {
-            return $this->sendErrorResponse('Bad request', ConstantService::HTTP_BAD_REQUEST);
+            return $this->sendErrorResponse('Vui lòng phát âm lại');
         }
     }
 }
