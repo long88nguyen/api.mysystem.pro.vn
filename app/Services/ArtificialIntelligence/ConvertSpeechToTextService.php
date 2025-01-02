@@ -25,8 +25,6 @@ class ConvertSpeechToTextService extends BaseService
             $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
             $path = $audioFile->storeAs('public/audio', $imageName);
             $apiPath = Storage::disk('public')->url('audio/'.$imageName);
-            $languagesAllowed = ['english', 'vietnamese'];
-
             $fullPath = storage_path('app/'.$path);
             $apiKey = env('OPENAI_API_KEY', true);
             $client = OpenAI::client($apiKey);
@@ -38,11 +36,11 @@ class ConvertSpeechToTextService extends BaseService
                     'response_format' => 'verbose_json',
                     'language' => 'en', // Chỉ nhận diện tiếng Anh
                 ]);
-        
                 // Kiểm tra xem ngôn ngữ có phải là tiếng Anh không và độ tin cậy của kết quả
                 if ($response && $response->language === 'english') {
-                    $logProb = $response->segments[0]->avg_log_prob ?? null; // Giá trị độ tin cậy
-                    if ($logProb !== null && $logProb > -1.0) { // Điều chỉnh ngưỡng tùy theo yêu cầu độ chính xác
+                    $logProb = $response->segments[0]->avgLogprob ?? null; // Giá trị độ tin cậy
+                    $noSpeechProb = $response->segments[0]->noSpeechProb ?? null;
+                    if ($logProb !== null && $logProb > -0.7 && $noSpeechProb < 0.5) { // Điều chỉnh ngưỡng tùy theo yêu cầu độ chính xác
                         return [
                             'text' => $response->text,
                             'url' => $apiPath,
@@ -51,15 +49,9 @@ class ConvertSpeechToTextService extends BaseService
                 }
         
                 // Trường hợp không đạt yêu cầu
-                return [
-                    'text' => 'Kết quả không đạt yêu cầu độ chính xác.',
-                    'url' => null,
-                ];
+                return false;
             } catch (Exception $e) {
-                return [
-                    'text' => 'Lỗi xảy ra khi xử lý âm thanh: ' . $e->getMessage(),
-                    'url' => null,
-                ];
+                return false;
             }
         } else {
             return $this->sendErrorResponse('Vui lòng phát âm lại');

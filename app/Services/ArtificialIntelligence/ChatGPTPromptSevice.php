@@ -29,11 +29,11 @@ class ChatGPTPromptSevice extends BaseService
                 'json' => [
                     'model' => $options['model'],
                     'messages' => $options['messages'],
-                    'max_tokens' => 250,
+                    'max_tokens' => 350,
                     'temperature' => 0.9,
                     'frequency_penalty' => 1.6,
                     'presence_penalty' => 1.9,
-                    'stop' => ["Kết thúc"],
+                    'stop' => ["end"],
                 ],
             ]);
 
@@ -52,10 +52,12 @@ class ChatGPTPromptSevice extends BaseService
     public function translation($options)
     {
         try {
+            
             $languages = [
                 'vi' => 'Tiếng Việt',
                 'en' => 'Tiếng Anh',
             ];
+
             $client = new Client();
             $apiKey = env('OPENAI_API_KEY');
 
@@ -76,7 +78,7 @@ class ChatGPTPromptSevice extends BaseService
                             "content" => "Hãy dịch cụm từ sau sang ".$languages[$options['language']]." : ".$options['text']."Chỉ cần hiện kết quả không cần hiển thị các từ khác" // Nội dung do người dùng nhập vào
                         ]
                     ],
-                    'max_tokens' => 150,
+                    'max_tokens' => 350,
                     'temperature' => 0.7
                 ],
             ]);

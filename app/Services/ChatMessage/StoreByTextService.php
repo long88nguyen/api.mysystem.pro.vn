@@ -45,16 +45,15 @@ class StoreByTextService extends BaseService
 
         $botName = $chatRoom->bot_name ?? 'Bot Chat';
         $languageOutput =  $chatRoom->language && isset($language[$chatRoom->language]) ? $language[$chatRoom->language] : $language['en'];
-        $requirements = $chatRoom->bot_description ? "" .$chatRoom->bot_description. ", chữa lỗi chính tả, ngữ pháp một cách đầy đủ và chi tiết cho câu trả lời
-        và có thể đưa ra các câu trả lời hợp lý hơn. chỉ được phép trả lời các câu hỏi liên quan đến chủ đề trên" : "";
+        $requirements = $chatRoom->bot_description ? "" .$chatRoom->bot_description."" : "";
         
-        $content = "Bạn tên là ".$botName.". ".$requirements.".
-        Hãy giao tiếp bằng ".$languageOutput." ngắn gọn, dễ hiểu, 
-        chỉ được trả lời bằng ".$languageOutput." 
-        cho dù câu hỏi có là bất kỳ ngôn ngữ nào khác";
-        
+        $content = "Bạn tên là ".$botName.". ".$requirements."
+        .Chỉ được giao tiếp bằng ".$languageOutput." ngắn gọn, dễ hiểu, 
+        bạn phải trả lời bằng ".$languageOutput." 
+        cho dù câu hỏi có là bất kỳ ngôn ngữ nào khác. Hãy hỏi sau khi chat từ: Bắt đầu";
+
         $messages[] = [
-            'role' => 'developer',
+            'role' => 'system',
             'content' => $content,
         ];
         

@@ -12,7 +12,7 @@ use App\Services\ArtificialIntelligence\ConvertSpeechToTextService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class StoreService extends BaseService
+ class StoreService extends BaseService
 {
     protected $pronunciationResultModel;
     protected $convertSpeechToText;
@@ -28,8 +28,13 @@ class StoreService extends BaseService
     public function store($request)
     {
         $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
+
         $data = $this->convertSpeechToText->convert($request);
-        $calculatePoint = $this->calculatePoint($pronunciationDetail->content, strtolower($data['text']));
+        if($data && $data['text'])
+        {
+            $calculatePoint = $this->calculatePoint($pronunciationDetail->content, strtolower($data['text']));
+        }
+        dd($data);
         
         $userId = auth(ConstantService::AUTH_USER)->user()->id;
         
