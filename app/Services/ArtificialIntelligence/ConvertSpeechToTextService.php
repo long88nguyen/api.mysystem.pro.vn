@@ -35,7 +35,10 @@ class ConvertSpeechToTextService extends BaseService
                     'file' => fopen($fullPath, 'r'),
                     'response_format' => 'verbose_json',
                     'language' => 'en', // Chỉ nhận diện tiếng Anh
+                    'temperature' => 0
                 ]);
+
+                // dd($response->segments[0]);
                 // Kiểm tra xem ngôn ngữ có phải là tiếng Anh không và độ tin cậy của kết quả
                 if ($response && $response->language === 'english') {
                     $logProb = $response->segments[0]->avgLogprob ?? null; // Giá trị độ tin cậy
@@ -49,9 +52,15 @@ class ConvertSpeechToTextService extends BaseService
                 }
         
                 // Trường hợp không đạt yêu cầu
-                return false;
+                return [
+                    'text' => null,
+                    'url' => null,
+                ];
             } catch (Exception $e) {
-                return false;
+                return [
+                    'text' => null,
+                    'url' => null,
+                ];;
             }
         } else {
             return $this->sendErrorResponse('Vui lòng phát âm lại');

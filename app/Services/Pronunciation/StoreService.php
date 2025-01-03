@@ -32,7 +32,7 @@ class StoreService extends BaseService
         {   
             $saveItem = [
                 'pronunciation_id' => $pronunciationSave['id'],
-                'content' => $item['content'] ?? null,
+                'content' => $item['content'] ? strtolower($this->trimSpecialCharacters($item['content'])) : null,
                 'ipa' => $item['ipa'] ?? null,
                 'created_by' => auth(ConstantService::AUTH_USER)->user()->id,
             ];
@@ -59,5 +59,14 @@ class StoreService extends BaseService
         PronunciationDetail::insert($arraySave);
         
         return $this->sendSuccessResponse([]);
+    }
+
+    public static function trimSpecialCharacters($string)
+    {   
+        // Thay thế các loại dấu phẩy khác nhau bằng dấu phẩy chuẩn ","
+        $string = preg_replace("/[‚，、﹐﹑]/u", ",", $string);
+        $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
+        $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
+        return trim($result); // loại bỏ khoảng trắng ở 2 đầu
     }
 }

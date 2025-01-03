@@ -30,12 +30,9 @@ use Illuminate\Support\Facades\Storage;
         $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
 
         $data = $this->convertSpeechToText->convert($request);
-        if($data && $data['text'])
-        {
-            $calculatePoint = $this->calculatePoint($pronunciationDetail->content, strtolower($data['text']));
-        }
-        dd($data);
-        
+        $questionContent = strtolower($this->trimSpecialCharacters($pronunciationDetail->content));
+        $answerContent = strtolower($this->trimSpecialCharacters($data['text']));
+        $calculateResult = $this->calculateResult($questionContent, $answerContent);
         $userId = auth(ConstantService::AUTH_USER)->user()->id;
         
         $checkResult = PronunciationResult::where('user_id',  $userId)->where('pronunciation_detail_id', $request['pronunciation_detail_id'])->first();
@@ -43,9 +40,9 @@ use Illuminate\Support\Facades\Storage;
         {
             $checkResult->update([
                 'content' => strtolower($this->trimSpecialCharacters($data['text'])),
-                'point' => $calculatePoint['score'],
+                'point' => $calculateResult['accuracy'],
                 'audio' => $data['url'],
-                'result' => json_encode($calculatePoint['result']),
+                'result' => json_encode($calculateResult['result']),
             ]); 
         }
         else{
@@ -53,9 +50,9 @@ use Illuminate\Support\Facades\Storage;
                 'user_id' => $userId,
                 'pronunciation_detail_id' => $request['pronunciation_detail_id'],
                 'content' => strtolower($this->trimSpecialCharacters($data['text'])),
-                'point' => $calculatePoint['score'],
+                'point' => $calculateResult['accuracy'],
                 'audio' => $data['url'],
-                'result' => json_encode($calculatePoint['result']),
+                'result' => json_encode($calculateResult['result']),
             ]);
         }
 
@@ -64,101 +61,52 @@ use Illuminate\Support\Facades\Storage;
         ]);
     }
 
-    public function calculatePoint($question, $answer)
+    public function calculateResult($prompt, $answer)
     {
-        $new_question = preg_replace('/[^a-zA-Z0-9\s]/', '', $question);
-        $new_answer = preg_replace('/[^a-zA-Z0-9\s]/', '', $answer);
-
-        $array_word_question = explode(' ', $new_question);
-        $array_word_answer = explode(' ', $new_answer);
-
-        $arrayResult = [];
-        $score = 0;
-
-        if (count($array_word_question) == 1) {
-            $total_question_character = 0;
-            $total_character_correct = 0;
-            $array_character_question = str_split($new_question);
-            $array_character_answer = str_split($new_answer);
-
-            $array_character_mapping = [];
-            foreach ($array_character_answer as $key => $character) {
-                $array_character_mapping[$key]['answer'] = $character;
-                $array_character_mapping[$key]['question'] = null;
-            }
-
-            foreach ($array_character_question as $key => $character) {
-                $array_character_mapping[$key]['question'] = $character;
-            }
-
-            foreach ($array_character_mapping as $key => $character) {
-                if (isset($character['answer']) && strtolower($character['question']) == strtolower($character['answer'])) {
-                    $arrayResult[] = [
-                        'word' => $character['answer'],
-                        'is_correct' => true,
-                    ];
-
-                    $total_character_correct++;
-                } else {
-                    $arrayResult[] = [
-                        'word' => ' ',
-                        'is_correct' => false,
-                    ];
-                }
-
-                if (count($array_character_question)) {
-                    $score = round($total_character_correct / count($array_character_question) * 100);
-                }
-            }
+        // Kiểm tra prompt là từ hay câu
+        if (strpos($prompt, ' ') === false) {
+            // Là từ, tách thành mảng ký tự
+            $promptItems = str_split($prompt);
+            $answerItems = str_split($answer);
         } else {
-            $array_word_mapping = [];
-            $total_question_word = 0;
-            $arrayWordCorrect = 0;
-            foreach ($array_word_answer as $key => $word) {
-                $array_word_mapping[$key]['answer'] = $word;
-                $array_word_mapping[$key]['question'] = null;
-            }
+            // Là câu, tách thành mảng từ
+            $promptItems = explode(' ', $prompt);
+            $answerItems = explode(' ', $answer);
+        }
 
-            foreach ($array_word_question as $key => $word) {
-                $array_word_mapping[$key]['question'] = $word;
-            }
+        $result = [];
+        $correctCount = 0;
 
-            foreach ($array_word_mapping as $key => $word) {
-                $total_question_word += strlen($word['question']);
-
-                if ( isset($word['answer']) && strtoupper($word['answer']) == strtoupper($word['question'])) {
-                    $arrayResult[] = [
-                        "word" => $word['answer'],
-                        "is_correct" => true,
-                    ];
-
-                    $arrayWordCorrect += strlen($word['question']);
-                } else {
-                    $arrayResult[] = [
-                        "word" => ' ',
-                        "is_correct" => false,
-                    ];
-                }
-            }
-
-            if ($total_question_word > 0) {
-                $score = round($arrayWordCorrect / $total_question_word * 100);
+        // So sánh từng phần tử trong đề bài với kết quả
+        foreach ($promptItems as $index => $item) {
+            $isCorrect = isset($answerItems[$index]) && $item === $answerItems[$index];
+            $result[] = [
+                'text' => $item,
+                'isCorrect' => $isCorrect,
+            ];
+            if ($isCorrect) {
+                $correctCount++;
             }
         }
 
+        // Tính tỷ lệ chính xác
+        $accuracy = (count($promptItems) > 0) ? ($correctCount / count($promptItems)) * 100 : 0;
 
         return [
-            'result' => $arrayResult,
-            'score' => $score,
+            'result' => $result,
+            'accuracy' => round($accuracy) // Làm tròn đến 2 chữ số thập phân
         ];
     }
 
     public static function trimSpecialCharacters($string)
     {   
-        // Thay thế các loại dấu phẩy khác nhau bằng dấu phẩy chuẩn ","
-        $string = preg_replace("/[‚，、﹐﹑]/u", ",", $string);
-        $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
-        $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
-        return trim($result); // loại bỏ khoảng trắng ở 2 đầu
+         // Thay thế các ký tự đặc biệt bằng khoảng trắng
+        $string = preg_replace('/[^a-zA-Z0-9\s]+/u', ' ', $string);
+
+        // Loại bỏ khoảng trắng thừa
+        $string = preg_replace('/\s+/', ' ', $string);
+
+        // Loại bỏ khoảng trắng ở hai đầu
+        return trim($string);
     }
 }
