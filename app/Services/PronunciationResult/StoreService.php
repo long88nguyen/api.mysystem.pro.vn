@@ -100,13 +100,10 @@ use Illuminate\Support\Facades\Storage;
 
     public static function trimSpecialCharacters($string)
     {   
-         // Thay thế các ký tự đặc biệt bằng khoảng trắng
-        $string = preg_replace('/[^a-zA-Z0-9\s]+/u', ' ', $string);
-
-        // Loại bỏ khoảng trắng thừa
-        $string = preg_replace('/\s+/', ' ', $string);
-
-        // Loại bỏ khoảng trắng ở hai đầu
-        return trim($string);
+        // Thay thế các loại dấu phẩy khác nhau bằng dấu phẩy chuẩn ","
+        $string = preg_replace("/[‚，、﹐﹑]/u", ",", $string);
+        $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
+        $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
+        return trim($result); // loại bỏ khoảng trắng ở 2 đầu
     }
 }
