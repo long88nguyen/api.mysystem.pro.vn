@@ -43,7 +43,7 @@ class ConvertSpeechToTextService extends BaseService
                 if ($response && $response->language === 'english') {
                     $logProb = $response->segments[0]->avgLogprob ?? null; // Giá trị độ tin cậy
                     $noSpeechProb = $response->segments[0]->noSpeechProb ?? null;
-                    if ($logProb !== null && $logProb > -0.7 && $noSpeechProb < 0.5) { // Điều chỉnh ngưỡng tùy theo yêu cầu độ chính xác
+                    if ($logProb !== null && $logProb > -1.0 && $noSpeechProb < 0.5) { // Điều chỉnh ngưỡng tùy theo yêu cầu độ chính xác
                         return [
                             'text' => $response->text,
                             'url' => $apiPath,
