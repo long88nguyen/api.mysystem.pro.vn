@@ -28,10 +28,10 @@ class StoreBySpeechService extends BaseService
 
     public function store($request)
     {
-        $convertSpeectToTextResult =  $this->convertSpeechToTextService->convert($request);
+        $convertSpeechToTextResult =  $this->convertSpeechToTextService->convert($request);
         $result =  [
-            'content' => $convertSpeectToTextResult['text'],
-            'audio' => $convertSpeectToTextResult['url'],
+            'content' => $convertSpeechToTextResult['text'],
+            'audio' => $convertSpeechToTextResult['url'],
         ];
 
         return $this->sendSuccessResponse($result);
