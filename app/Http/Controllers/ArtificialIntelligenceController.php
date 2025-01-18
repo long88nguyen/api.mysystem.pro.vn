@@ -12,7 +12,7 @@ class ArtificialIntelligenceController extends Controller
 {
     protected $convertSpeechToText;
     protected $convertTextToSpeech;
-    protected $chatGPTPromptSerivce;
+    protected $chatGPTPromptSerivce; 
 
     public function __construct(ConvertSpeechToTextService $convertSpeechToText, 
     ConvertTextToSpeechService $convertTextToSpeech,
