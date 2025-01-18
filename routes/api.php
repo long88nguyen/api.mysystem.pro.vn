@@ -38,6 +38,8 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
     Route::prefix('chat-room')->group(function () {
         Route::get('/index', [ChatRoomController::class, 'index'])->name('chat-room.index');
         Route::post('/store', [ChatRoomController::class, 'store'])->name('chat-room.store');
+        Route::get('/edit/{id}', [ChatRoomController::class, 'edit'])->name('chat-room.edit');
+        Route::post('/update/{id}', [ChatRoomController::class, 'update'])->name('chat-room.update');
         Route::post('/delete/{id}', [ChatRoomController::class, 'delete'])->name('chat-room.delete');
         Route::get('/get-by-id/{id}', [ChatRoomController::class, 'getById'])->name('chat-room.get-by-id');
     });

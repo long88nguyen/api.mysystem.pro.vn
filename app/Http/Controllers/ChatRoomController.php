@@ -34,6 +34,16 @@ class ChatRoomController extends Controller
         return $this->storeService->store($request);
     }
 
+    public function edit($id)
+    {
+
+    }
+
+    public function update(Request $request, $id)
+    {
+        
+    }
+
     public function delete($id)
     {
         
