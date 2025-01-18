@@ -20,7 +20,7 @@ class ArtificialIntelligenceController extends Controller
     )
     {
         $this->convertSpeechToText = $convertSpeechToText;
-        $this->convertTextToSpeech = $convertTextToSpeech;
+        $this->convertTextToSpeech = $convertTextToSpeech; 
         $this->chatGPTPromptSerivce = $chatGPTPromptSerivce;
     }
 
