@@ -6,8 +6,12 @@ use App\Models\Message;
 use App\Services\_Abstract\BaseService;
 use App\Services\_Constant\ConstantService;
 use Exception;
+use getID3;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Storage;
 use OpenAI;
+use FFMpeg\FFMpeg;
 
 class ConvertSpeechToTextService extends BaseService
 {
@@ -64,6 +68,51 @@ class ConvertSpeechToTextService extends BaseService
             }
         } else {
             return $this->sendErrorResponse('Vui lòng phát âm lại');
+        }
+    }
+
+    public function convertGoogleCloud($request)
+    {
+        $audioFile = $request->file('audio');
+        $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
+        $path = $audioFile->storeAs('public/audio', $imageName);
+        $apiPath = Storage::disk('public')->url('audio/'.$imageName);
+
+        $audioContent = file_get_contents($request->file('audio')->getRealPath());
+        $googleCloudAPIKey = 'AIzaSyADhpMrZ95PS9lQEjj37ODczKgRFe5oFuU';
+        $url = 'https://speech.googleapis.com/v1p1beta1/speech:recognize';
+
+        $requestData = [
+            'config' => [
+                'encoding' => 'LINEAR16',
+                'sampleRateHertz' => 16000,
+                'languageCode' => 'en-US',
+            ],
+            'audio' => [
+                'content' => base64_encode($audioContent),
+            ],
+        ];
+
+        try {
+            $client =  new Client();
+            $response = $client->post($url, [
+                'query' => ['key' => $googleCloudAPIKey],
+                'json' => $requestData,
+            ]);
+            $responseData = json_decode($response->getBody(), true);
+            if (isset($responseData['results'][0]['alternatives'][0]['transcript'])) {
+                return [
+                    'text' => $responseData['results'][0]['alternatives'][0]['transcript'],
+                    'url' => $apiPath,
+                ];
+            } else {
+                return [
+                    'text' => null,
+                    'url' => null,
+                ];
+            }
+        } catch (RequestException $e) {
+            return 'Error: ' . $e->getMessage();
         }
     }
 }

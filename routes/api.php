@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::get('/index', [PronunciationController::class, 'index']);
         Route::post('/store', [PronunciationController::class, 'store']);
         Route::get('/get-by-id/{id}', [PronunciationController::class, 'getById']);
+        Route::put('/update/{id}', [PronunciationController::class, 'update']);
+        Route::delete('/delete/{id}', [PronunciationController::class, 'delete']);
     });
 
 

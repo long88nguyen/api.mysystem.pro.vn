@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pronunciation;
+use App\Services\ArtificialIntelligence\ConvertTextToSpeechService;
 use App\Services\ChatMessage\GetByChatRoomIdService;
 use App\Services\ChatMessage\StoreBySpeechService;
 use App\Services\ChatMessage\StoreByTextService;

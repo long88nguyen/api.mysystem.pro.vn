@@ -33,11 +33,10 @@ class ConvertTextToSpeechService extends BaseService
             'model' => $options['model'] ?? 'tts-1',
             'input' => $options['input'] ?? 'Chúng tôi không hiểu bạn nói gì',
             'voice' => $options['voice'] ?? 'alloy',
-            'language' => $options['language'] ?? 'vi',
+            'language' => $options['language'] ?? 'en',
         )));
 
         $result = curl_exec($ch);
-
         if (curl_errno($ch)) {
             return false;
         } else {

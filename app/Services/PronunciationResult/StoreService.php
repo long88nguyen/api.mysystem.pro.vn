@@ -27,9 +27,10 @@ use Illuminate\Support\Facades\Storage;
 
     public function store($request)
     {
-        $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
+        // $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
 
-        $data = $this->convertSpeechToText->convert($request);
+        $data = $this->convertSpeechToText->convertGoogleCloud($request);
+        dd($data);
         $questionContent = strtolower($this->trimSpecialCharacters($pronunciationDetail->content));
         $answerContent = strtolower($this->trimSpecialCharacters($data['text']));
         $calculateResult = $this->calculateResult($questionContent, $answerContent);
@@ -105,5 +106,16 @@ use Illuminate\Support\Facades\Storage;
         $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
         $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
         return trim($result); // loại bỏ khoảng trắng ở 2 đầu
+    }
+
+    public function test($request)
+    {
+        $audioFile = $request->file('audio');
+        $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
+        $path = $audioFile->storeAs('public/audio', $imageName);
+        $apiPath = Storage::disk('public')->url('audio/'.$imageName);
+        return $this->sendSuccessResponse([
+            'url' => $apiPath,
+        ]);
     }
 }

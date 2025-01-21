@@ -11,7 +11,7 @@ use App\Services\ArtificialIntelligence\ConvertTextToSpeechService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class StoreService extends BaseService
+class UpdateService extends BaseService
 {
     protected $pronunciationModel;
 
@@ -20,13 +20,15 @@ class StoreService extends BaseService
         $this->pronunciationModel = $pronunciationModel;
     }
 
-    public function store($request)
+    public function update($request, $id)
     {
         $data =  $request->all();
-        $pronunciationSave = $this->pronunciationModel->create([
+        $pronunciationSave = $this->pronunciationModel->findOrFail($id)->update([
             'topic_name' => $data['topic_name'] ?? null,
             'user_id' => auth(ConstantService::AUTH_USER)->user()->id,
         ]);
+
+        $this->deleteDetail($id);
 
         $arraySave = [];
         foreach($data['pronunciation_details'] as $key => $item)
@@ -57,9 +59,11 @@ class StoreService extends BaseService
                 $convert = new ConvertTextToSpeechService();
                 $saveItem['audio'] = $convert->convert([
                     'input' => $saveItem['content'],
+                    'voice' => 'alloy',
+                    'language' => 'en',
                 ]);
             }
-            
+
             $arraySave[] = $saveItem;
         }
 
@@ -75,5 +79,22 @@ class StoreService extends BaseService
         $string = preg_replace("/[‘’]/u", "'", $string); // thay thế dấu ‘ hoặc dấu ’ bằng dấu '
         $result = preg_replace('/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/', '', $string); // loại bỏ cả ký tự đặc biệt ở 2 đầu
         return trim($result); // loại bỏ khoảng trắng ở 2 đầu
+    }
+
+    public function deleteDetail($id)
+    {
+        $pronunciations = PronunciationDetail::where('pronunciation_id', $id)->get();
+
+        $domain = env('APP_ENV') == 'local' ? 'http://localhost:8888/storage' : 'https://api.mysystem.pro.vn/storage';
+        foreach ($pronunciations as $pronunciation) {
+            if($pronunciation->audio){
+
+                $newFile = str_replace($domain, '', $pronunciation->audio);
+                Storage::disk('public')->delete($newFile);
+            }
+
+            $pronunciation->delete();
+        }
+        
     }
 }
