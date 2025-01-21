@@ -74,7 +74,7 @@ class ConvertSpeechToTextService extends BaseService
     public function convertGoogleCloud($request)
     {
         $audioFile = $request->file('audio');
-        $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
+        $imageName = time() . '.' . 'mp3';
         $path = $audioFile->storeAs('public/audio', $imageName);
         $apiPath = Storage::disk('public')->url('audio/'.$imageName);
 
@@ -112,7 +112,10 @@ class ConvertSpeechToTextService extends BaseService
                 ];
             }
         } catch (RequestException $e) {
-            return 'Error: ' . $e->getMessage();
+            return [
+                'text' => "Error: ".$e->getMessage(),
+                'url' => null,
+            ];
         }
     }
 }

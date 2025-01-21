@@ -27,10 +27,9 @@ use Illuminate\Support\Facades\Storage;
 
     public function store($request)
     {
-        // $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
+        $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
 
         $data = $this->convertSpeechToText->convertGoogleCloud($request);
-        dd($data);
         $questionContent = strtolower($this->trimSpecialCharacters($pronunciationDetail->content));
         $answerContent = strtolower($this->trimSpecialCharacters($data['text']));
         $calculateResult = $this->calculateResult($questionContent, $answerContent);
@@ -59,6 +58,7 @@ use Illuminate\Support\Facades\Storage;
 
         return $this->sendSuccessResponse([
             'url' => $data['url'],
+            'text' => $data['text'],
         ]);
     }
 
