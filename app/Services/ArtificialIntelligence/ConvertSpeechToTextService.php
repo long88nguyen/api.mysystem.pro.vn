@@ -107,7 +107,7 @@ class ConvertSpeechToTextService extends BaseService
                 ];
             } else {
                 return [
-                    'text' => null,
+                    'text' => 'Không có dữ liệu',
                     'url' => null,
                 ];
             }
