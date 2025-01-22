@@ -85,7 +85,7 @@ class ConvertSpeechToTextService extends BaseService
         $requestData = [
             'config' => [
                 'encoding' => 'LINEAR16',
-                'sampleRateHertz' => 16000,
+                // 'sampleRateHertz' => 16000,
                 'languageCode' => 'en-US',
             ],
             'audio' => [
