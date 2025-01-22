@@ -108,13 +108,13 @@ class ConvertSpeechToTextService extends BaseService
             } else {
                 return [
                     'text' => 'Không có dữ liệu',
-                    'url' => null,
+                    'url' => $apiPath,
                 ];
             }
         } catch (RequestException $e) {
             return [
                 'text' => "Error: ".$e->getMessage(),
-                'url' => null,
+                'url' => $apiPath,
             ];
         }
     }
