@@ -111,9 +111,10 @@ use Illuminate\Support\Facades\Storage;
     public function test($request)
     {
         $audioFile = $request->file('audio');
-        $imageName = time() . '.' . $audioFile->getClientOriginalExtension();
+        $imageName = time() . '.' . 'mp3';
         $path = $audioFile->storeAs('public/audio', $imageName);
         $apiPath = Storage::disk('public')->url('audio/'.$imageName);
+        
         return $this->sendSuccessResponse([
             'url' => $apiPath,
         ]);

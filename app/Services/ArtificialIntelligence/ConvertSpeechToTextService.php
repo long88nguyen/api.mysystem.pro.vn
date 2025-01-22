@@ -101,7 +101,7 @@ class ConvertSpeechToTextService extends BaseService
             ]);
             $responseData = json_decode($response->getBody(), true);
             if (isset($responseData['results'][0]['alternatives'][0]['transcript'])) {
-                return [
+                return [                   
                     'text' => $responseData['results'][0]['alternatives'][0]['transcript'],
                     'url' => $apiPath,
                 ];
