@@ -60,6 +60,7 @@ use Illuminate\Support\Facades\Storage;
         return $this->sendSuccessResponse([
             'url' => $data['url'],
             'text' => $data['text'],
+            'confidence' => $data['confidence'] ?? null,
         ]);
     }
 

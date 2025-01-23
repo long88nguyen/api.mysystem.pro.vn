@@ -104,6 +104,7 @@ class ConvertSpeechToTextService extends BaseService
                 return [                   
                     'text' => $responseData['results'][0]['alternatives'][0]['transcript'],
                     'url' => $apiPath,
+                    'confidence' => $responseData['results'][0]['alternatives'][0]['confidence'],
                 ];
             } else {
                 return [
