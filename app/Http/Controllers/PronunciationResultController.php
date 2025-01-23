@@ -16,6 +16,6 @@ class PronunciationResultController extends Controller
 
     public function store(Request $request)
     {
-        return $this->storeService->test($request);
+        return $this->storeService->store($request);
     }
 }
