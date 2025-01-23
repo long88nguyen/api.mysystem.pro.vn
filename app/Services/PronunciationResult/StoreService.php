@@ -61,6 +61,7 @@ use Illuminate\Support\Facades\Storage;
             'url' => $data['url'],
             'text' => $data['text'],
             'confidence' => $data['confidence'] ?? null,
+            'words' => $data['words'],
         ]);
     }
 

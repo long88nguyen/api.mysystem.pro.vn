@@ -86,7 +86,8 @@ class ConvertSpeechToTextService extends BaseService
             'config' => [
                 'encoding' => 'LINEAR16',
                 // 'sampleRateHertz' => 16000,
-                'languageCode' => 'en-US',
+                'languageCode' => 'en-GB',
+                'enableWordConfidence' => true,
             ],
             'audio' => [
                 'content' => base64_encode($audioContent),
@@ -100,11 +101,13 @@ class ConvertSpeechToTextService extends BaseService
                 'json' => $requestData,
             ]);
             $responseData = json_decode($response->getBody(), true);
+            // dd($responseData);
             if (isset($responseData['results'][0]['alternatives'][0]['transcript'])) {
                 return [                   
                     'text' => $responseData['results'][0]['alternatives'][0]['transcript'],
                     'url' => $apiPath,
                     'confidence' => $responseData['results'][0]['alternatives'][0]['confidence'],
+                    'words' => $responseData['results'][0]['alternatives'][0]['words'],
                 ];
             } else {
                 return [
