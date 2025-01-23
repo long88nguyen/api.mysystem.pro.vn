@@ -9,6 +9,7 @@ use App\Models\PronunciationResult;
 use App\Services\_Abstract\BaseService;
 use App\Services\_Constant\ConstantService;
 use App\Services\ArtificialIntelligence\ConvertSpeechToTextService;
+use getID3;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -111,12 +112,23 @@ use Illuminate\Support\Facades\Storage;
     public function test($request)
     {
         $audioFile = $request->file('audio');
+        $audioFileRealPath = $request->file('audio')->getRealPath();
+        $getID3 = new getID3();
+        $fileInfo = $getID3->analyze($audioFileRealPath);
         $imageName = time() . '.' . 'mp3';
         $path = $audioFile->storeAs('public/audio', $imageName);
+        $fullPath = storage_path('app/'.$path);
         $apiPath = Storage::disk('public')->url('audio/'.$imageName);
         
         return $this->sendSuccessResponse([
             'url' => $apiPath,
+            'audioInfo' => [
+                'dataformat' => $fileInfo['audio']['dataformat'],
+                'sample_rate' => $fileInfo['audio']['sample_rate'],
+                'bits_per_sample' => $fileInfo['audio']['bits_per_sample'],
+                'channels' => $fileInfo['audio']['channels'],
+                'channelmode' => $fileInfo['audio']['channelmode'],
+            ],
         ]);
     }
 }
