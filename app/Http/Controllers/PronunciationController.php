@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ChatRoom\DeleteService;
+use App\Services\Pronunciation\DeleteService;
 use App\Services\Pronunciation\GetAllService;
 use App\Services\Pronunciation\GetByIdService;
 use App\Services\Pronunciation\StoreService;
@@ -27,8 +27,8 @@ class PronunciationController extends Controller
         $this->storeService = $storeService;
         $this->getAllService = $getAllService;
         $this->getByIdService = $getByIdService;
-        $this->deleteService = $deleteService;
         $this->updateService = $updateService;
+        $this->deleteService = $deleteService;
     }
 
     public function index()
@@ -46,7 +46,7 @@ class PronunciationController extends Controller
         return $this->getByIdService->getById($id);
     }
 
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         return $this->updateService->update($request, $id);
     }

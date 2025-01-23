@@ -34,13 +34,13 @@ class UpdateService extends BaseService
         foreach($data['pronunciation_details'] as $key => $item)
         {   
             $saveItem = [
-                'pronunciation_id' => $pronunciationSave['id'],
+                'pronunciation_id' => $id,
                 'content' => $item['content'] ? strtolower($this->trimSpecialCharacters($item['content'])) : null,
                 'ipa' => $item['ipa'] ?? null,
                 'created_by' => auth(ConstantService::AUTH_USER)->user()->id,
             ];
 
-            if(isset($item['audio']) && !empty($item['audio']))
+            if(isset($item['audio']) && !empty($item['audio']) && $request->hasFile('audio'))
             {
                 $file = $item['audio'];
                 $path = 'audio' . date("/Y/m/d/");
