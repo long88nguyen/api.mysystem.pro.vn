@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Storage;
             foreach($data['words'] as $word)
             {
                 $answerArrayWords[] = [
-                   'word'=> $this->trimSpecialCharacters($word['word']),
+                   'word'=> $this->trimSpecialCharacters(strtolower($word['word'])),
                    'confidence'=> $word['confidence'],
                 ];
             }
