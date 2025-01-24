@@ -32,8 +32,21 @@ use Illuminate\Support\Facades\Storage;
 
         $data = $this->convertSpeechToText->convertGoogleCloud($request);
         $questionContent = strtolower($this->trimSpecialCharacters($pronunciationDetail->content));
-        $answerContent = strtolower($this->trimSpecialCharacters($data['text']));
-        $calculateResult = $this->calculateResult($questionContent, $answerContent);
+        $questionArrayWords = explode(' ', $questionContent);
+
+        $answerArrayWords = [];
+        if(isset($data['words']))
+        {
+            foreach($data['words'] as $word)
+            {
+                $answerArrayWords[] = [
+                   'word'=> $this->trimSpecialCharacters($word['word']),
+                   'confidence'=> $word['confidence'],
+                ];
+            }
+        }
+        
+        $calculateResult = $this->calculateResult($questionArrayWords, $answerArrayWords);
         $userId = auth(ConstantService::AUTH_USER)->user()->id;
         
         $checkResult = PronunciationResult::where('user_id',  $userId)->where('pronunciation_detail_id', $request['pronunciation_detail_id'])->first();
@@ -61,41 +74,32 @@ use Illuminate\Support\Facades\Storage;
             'url' => $data['url'],
             'text' => $data['text'],
             'confidence' => $data['confidence'] ?? null,
-            'words' => $data['words'],
+            'words' => $data['words'] ?? null,
         ]);
     }
 
-    public function calculateResult($prompt, $answer)
+    public function calculateResult($questionArrayWords, $answerArrayWords)
     {
         // Kiểm tra prompt là từ hay câu
-        if (strpos($prompt, ' ') === false) {
-            // Là từ, tách thành mảng ký tự
-            $promptItems = str_split($prompt);
-            $answerItems = str_split($answer);
-        } else {
-            // Là câu, tách thành mảng từ
-            $promptItems = explode(' ', $prompt);
-            $answerItems = explode(' ', $answer);
-        }
 
         $result = [];
         $correctCount = 0;
 
         // So sánh từng phần tử trong đề bài với kết quả
-        foreach ($promptItems as $index => $item) {
-            $isCorrect = isset($answerItems[$index]) && $item === $answerItems[$index];
+        foreach ($questionArrayWords as $index => $item) {
+            $isCorrect = isset($answerArrayWords[$index]) && isset($answerArrayWords[$index]['word']) && $item === $answerArrayWords[$index]['word'];
             $result[] = [
                 'text' => $item,
                 'isCorrect' => $isCorrect,
+                'confidence' =>  $isCorrect ? round($answerArrayWords[$index]['confidence'] * 100) : 0,
             ];
+
             if ($isCorrect) {
                 $correctCount++;
             }
         }
-
         // Tính tỷ lệ chính xác
-        $accuracy = (count($promptItems) > 0) ? ($correctCount / count($promptItems)) * 100 : 0;
-
+        $accuracy = (count($questionArrayWords) > 0) ? (array_sum(array_column($result, 'confidence')) / count($questionArrayWords)) : 0;
         return [
             'result' => $result,
             'accuracy' => round($accuracy) // Làm tròn đến 2 chữ số thập phân

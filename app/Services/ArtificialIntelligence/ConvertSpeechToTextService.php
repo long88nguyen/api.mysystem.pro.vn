@@ -94,14 +94,15 @@ class ConvertSpeechToTextService extends BaseService
             ],
         ];
 
+
         try {
             $client =  new Client();
             $response = $client->post($url, [
                 'query' => ['key' => $googleCloudAPIKey],
                 'json' => $requestData,
             ]);
+            
             $responseData = json_decode($response->getBody(), true);
-            // dd($responseData);
             if (isset($responseData['results'][0]['alternatives'][0]['transcript'])) {
                 return [                   
                     'text' => $responseData['results'][0]['alternatives'][0]['transcript'],
