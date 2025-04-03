@@ -27,6 +27,14 @@ use Illuminate\Support\Facades\Storage;
 
     public function store($request)
     {
+
+        $audioFile = $request->file('audio');
+        $imageName = time() . '.' . 'mp3';
+        $path = $audioFile->storeAs('public/audio', $imageName);
+        $apiPath = Storage::disk('public')->url('audio/'.$imageName);
+        return $this->sendSuccessResponse([
+            'url' =>  $apiPath,
+        ]);
         $pronunciationDetail = PronunciationDetail::findOrFail($request['pronunciation_detail_id']);
 
         $data = $this->convertSpeechToText->convertGoogleCloud($request);

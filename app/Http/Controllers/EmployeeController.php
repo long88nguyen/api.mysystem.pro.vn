@@ -15,11 +15,14 @@ class EmployeeController extends Controller
         ]);
     }
 
+    
+
     public function store(Request $request)
     {
         $result = Employee::create([
             'name' => $request['name'],
             'age' => $request['age'],
+            'description' => $request['description'],
         ]);
 
         return response()->json([
