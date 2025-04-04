@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Storage;
 
     public function store($request)
     {
-
+        
         $audioFile = $request->file('audio');
         $imageName = time() . '.' . 'mp3';
         $path = $audioFile->storeAs('public/audio', $imageName);
