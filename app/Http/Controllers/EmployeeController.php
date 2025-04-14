@@ -42,10 +42,10 @@ class EmployeeController extends Controller
 
     public function autoStore()
     {
-        $faker = \Faker\Factory::create();
+        // $faker = \Faker\Factory::create();
         $data = Employee::create([
-            'name' => $faker->name,
-            'age' => $faker->numberBetween(1, 100),
+            'name' => 'name-'.random_int(1, 100),
+            'age' => random_int(1, 100),
         ]);
         return response()->json([
             'data' => $data,
