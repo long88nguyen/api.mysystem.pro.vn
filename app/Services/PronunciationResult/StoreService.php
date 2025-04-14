@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
     protected $pronunciationResultModel;
     protected $convertSpeechToText;
 
-    public function __construct(
+    public function __construct( 
         PronunciationResult $pronunciationResultModel, 
         ConvertSpeechToTextService $convertSpeechToText
     ) {

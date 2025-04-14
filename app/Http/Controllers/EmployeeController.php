@@ -39,4 +39,17 @@ class EmployeeController extends Controller
             'status' => true,
         ]);
     }
+
+    public function autoStore()
+    {
+        $faker = \Faker\Factory::create();
+        $data = Employee::create([
+            'name' => $faker->name,
+            'age' => $faker->numberBetween(1, 100),
+        ]);
+        return response()->json([
+            'data' => $data,
+            'status' => true,
+        ]);
+    }
 }

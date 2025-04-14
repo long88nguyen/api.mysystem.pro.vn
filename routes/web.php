@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthAdminController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,5 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthAdminController::class, 'loginForm'])->name('auth-login.login-form');
 Route::post('/login', [AuthAdminController::class, 'login'])->name('auth-login.login');
+
+Route::get('/employee/auto-store', [EmployeeController::class, 'autoStore'])->name('employee.auto-store');
