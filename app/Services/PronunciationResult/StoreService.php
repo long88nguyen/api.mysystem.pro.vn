@@ -30,7 +30,8 @@ use Illuminate\Support\Facades\Storage;
     {
 
         $audioFile = $request->file('audio');
-        $imageName = time() . '.' . 'mp3';
+        $extension = $audioFile->getClientOriginalExtension();
+        $imageName = time() . '.' . $extension;
         $path = $audioFile->storeAs('public/audio', $imageName);
         $apiPath = Storage::disk('public')->url('audio/'.$imageName);
         return $this->sendSuccessResponse([
@@ -129,7 +130,8 @@ use Illuminate\Support\Facades\Storage;
         $audioFileRealPath = $request->file('audio')->getRealPath();
         $getID3 = new getID3();
         $fileInfo = $getID3->analyze($audioFileRealPath);
-        $imageName = time() . '.' . 'mp3';
+        $extension = $audioFile->getClientOriginalExtension(); // lấy đúng đuôi gốc
+        $imageName = time() . '.' . $extension;
         $path = $audioFile->storeAs('public/audio', $imageName);
         $fullPath = storage_path('app/'.$path);
         $apiPath = Storage::disk('public')->url('audio/'.$imageName);
