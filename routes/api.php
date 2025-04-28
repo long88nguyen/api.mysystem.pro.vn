@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PronunciationController;
 use App\Http\Controllers\PronunciationResultController;
 use App\Http\Controllers\SendMailController;
+use App\Http\Controllers\UploadFileController;
 use App\Services\_Constant\ConstantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,8 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
         Route::post('/store', [PronunciationResultController::class, 'store']);
     });
 
+
+    Route::post('/upload-file', [UploadFileController::class, 'uploadFile']);
     
     Route::post('/send-mail', [SendMailController::class, 'sendMail']);
 });
