@@ -12,53 +12,34 @@ class UploadFileController extends Controller
 {
     public function uploadFile(Request $request)
     {
-        try {
-            $request->validate([
-                'file' => 'required|file|max:20480', // 20MB
-            ]);
-        
-            if (!$request->hasFile('file')) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No file uploaded!',
-                ]);
+        try
+        {
+            if ($file = $request->file('file')) {
+                $path = 'uploads/u' . date("/Y/m/d/");
+                $extension  = $file->getClientOriginalExtension();
+                $image_name = time() .  '.' . $extension;
+                $filePath  = $path   . $image_name; // đặt file ảnh trong folder chính / năm / tháng / ngày upload
+    
+                $result = Storage::disk('s3')->putFileAs($path, $file, $image_name); // upload lên S3
+                if($result)
+                {
+                    $fileSize = $file->getSize();
+                    // Lấy URL đầy đủ của tệp trên S3
+                    $fileUrl = Storage::disk('s3')->url($filePath);
+                    return [
+                        'url' => $fileUrl,
+                        'size' => $fileSize,
+                    ];
+                }
+                else{
+                    return false;
+                }
             }
-        
-            $file = $request->file('file');
-        
-            if (!$file->isValid()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Invalid file!',
-                ]);
-            }
-        
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $path = Storage::disk('s3')->putFileAs('uploads', $file, $filename, 'public');
-        
-            if ($path) {
-                $url = Storage::disk('s3')->url($path);
-                return response()->json([
-                    'status' => true,
-                    'url' => $url,
-                ]);
-            }
-        
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to upload file to S3.',
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Upload S3 error', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-        
-            return response()->json([
-                'status' => false,
-                'message' => 'Error: ' . $e->getMessage(),
-            ], 500);
         }
-        
+        catch(Exception $e)
+        {
+            Log::error("Lỗi upload file :" .$e->getMessage());
+            return false;
+        }
     }
 }
