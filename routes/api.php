@@ -34,6 +34,8 @@ Route::post('/chat-gpt-prompt', [ArtificialIntelligenceController::class, 'chatG
 Route::get('/employee', [EmployeeController::class, 'index']);
 Route::post('/employee/store', [EmployeeController::class, 'store']);
 Route::delete('/employee/delete/{id}', [EmployeeController::class, 'delete']);
+Route::post('/upload-file', [UploadFileController::class, 'uploadFile']);
+
 
 Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function () {
     Route::prefix('message')->group(function() {
@@ -70,7 +72,6 @@ Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function 
     });
 
 
-    Route::post('/upload-file', [UploadFileController::class, 'uploadFile']);
     
     Route::post('/send-mail', [SendMailController::class, 'sendMail']);
 });
