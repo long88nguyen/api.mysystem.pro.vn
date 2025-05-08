@@ -1,11 +1,13 @@
 <?php
 
+use App\Events\NotificationEvent;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\ArtificialIntelligenceController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PronunciationController;
 use App\Http\Controllers\PronunciationResultController;
 use App\Http\Controllers\SendMailController;
@@ -36,6 +38,8 @@ Route::post('/employee/store', [EmployeeController::class, 'store']);
 Route::delete('/employee/delete/{id}', [EmployeeController::class, 'delete']);
 Route::post('/upload-file', [UploadFileController::class, 'uploadFile']);
 
+Route::post('/send-notification', [NotificationController::class, 'sendMessage' ]);
+Route::get('/get-message', [NotificationController::class, 'getMessage' ]);
 
 Route::group(['middleware' => ['auth:' . ConstantService::AUTH_USER]], function () {
     Route::prefix('message')->group(function() {

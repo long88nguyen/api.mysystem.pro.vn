@@ -9,6 +9,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "james-heinrich/getid3": "^1.9",
         "laravel/framework": "^10.0",
+        "laravel/reverb": "^1.5",
         "laravel/sanctum": "^3.2",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
