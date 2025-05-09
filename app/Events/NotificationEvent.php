@@ -25,4 +25,9 @@ class NotificationEvent implements ShouldBroadcast
     {
         return new Channel('notifications-2');
     }
+
+    public function broadcastVia()
+    {
+        return 'reverb';
+    }
 }
